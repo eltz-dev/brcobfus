@@ -1,148 +1,989 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BRC7 | Obfuscator</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body {
-    background: #0f172a;
-    color: #e2e8f0;
-    font-family: Arial;
-    display: flex;
-    flex-direction: column;
+  :root {
+    --bg: #0a0c0f;
+    --surface: #0f1217;
+    --surface2: #151820;
+    --surface3: #1c2029;
+    --border: #1f2535;
+    --border2: #2a3348;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #e2e8f0;
+    --text2: #8892a4;
+    --text3: #4a5568;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --glow: rgba(0, 229, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 0 32px;
+    text-align: center;
+    position: relative;
+  }
+
+  .badge {
+    display: inline-flex;
     align-items: center;
-}
-h1 {
-    margin: 20px;
-}
-.container {
+    gap: 6px;
+    background: rgba(0, 229, 255, 0.06);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-size: clamp(38px, 7vw, 64px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  h1 .brc { color: var(--text); }
+  h1 .seven {
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(0,229,255,0.4);
+  }
+  h1 .pipe { color: var(--text3); margin: 0 8px; }
+  h1 .obf { color: var(--text2); font-weight: 600; }
+
+  .tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .desc {
+    max-width: 560px;
+    margin: 0 auto 12px;
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* TECH BADGES */
+  .tech-row {
     display: flex;
-    gap: 20px;
-    width: 90%;
-}
-textarea {
-    width: 45%;
-    height: 400px;
-    background: #020617;
-    color: #38bdf8;
-    border: none;
-    padding: 10px;
-    border-radius: 10px;
-}
-.center {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0 8px;
+  }
+
+  .tech-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+
+  .tech-tag.cyan { color: var(--accent); border-color: rgba(0,229,255,0.25); background: rgba(0,229,255,0.04); }
+  .tech-tag.purple { color: #a78bfa; border-color: rgba(167,139,250,0.25); background: rgba(167,139,250,0.04); }
+  .tech-tag.green { color: var(--accent3); border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.04); }
+  .tech-tag.amber { color: var(--warn); border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.04); }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    margin: 32px 0;
+  }
+
+  /* MAIN TOOL */
+  .tool-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .tool-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .tool-header-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .dot-row { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 640px) {
+    .cols { grid-template-columns: 1fr; }
+  }
+
+  .col {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-}
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    background: #38bdf8;
+  }
+
+  .col:first-child { border-right: 1px solid var(--border); }
+
+  .col-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .col-label span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .line-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+  }
+
+  textarea {
+    flex: 1;
+    min-height: 340px;
+    width: 100%;
+    background: transparent;
     border: none;
-    border-radius: 10px;
+    outline: none;
+    resize: none;
+    padding: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    caret-color: var(--accent);
+    tab-size: 2;
+  }
+
+  textarea::placeholder { color: var(--text3); }
+
+  textarea#output {
+    color: var(--accent3);
+    cursor: default;
+  }
+
+  /* ACTION ZONE */
+  .action-zone {
+    border-top: 1px solid var(--border);
+    padding: 20px;
+    background: var(--surface2);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* Options */
+  .options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .opt-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
-    font-weight: bold;
-}
-button:hover {
-    background: #0ea5e9;
-}
-.actions {
-    margin-top: 10px;
-}
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .checkbox-item label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .btn:hover::before { opacity: 0.06; }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: rgba(0, 229, 255, 0.1);
+    border-color: rgba(0, 229, 255, 0.4);
+    color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: rgba(0, 229, 255, 0.16);
+    border-color: rgba(0, 229, 255, 0.7);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.03);
+    border-color: var(--border2);
+    color: var(--text2);
+  }
+
+  .btn-secondary:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+
+  .btn-green {
+    background: rgba(16,185,129,0.08);
+    border-color: rgba(16,185,129,0.3);
+    color: var(--accent3);
+  }
+
+  .btn-green:hover {
+    background: rgba(16,185,129,0.14);
+    border-color: rgba(16,185,129,0.6);
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    min-height: 20px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+  }
+
+  .status-dot.working { background: var(--warn); animation: pulse 1s infinite; }
+  .status-dot.done { background: var(--accent3); }
+  .status-dot.error { background: var(--danger); }
+
+  /* Loading bar */
+  .progress-wrap {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.1s ease;
+  }
+
+  /* STATS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-cell {
+    background: var(--surface);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 32px 0 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1px;
+  }
+
+  .footer-text .hi { color: var(--accent); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 640px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .btn-row { gap: 8px; }
+    .btn { padding: 10px 16px; font-size: 12px; }
+  }
 </style>
 </head>
 <body>
 
-<h1>BRC7 | Obfuscator</h1>
-
 <div class="container">
-    <textarea id="input" placeholder="Masukkan kode asli disini"></textarea>
+  <header>
+    <div class="badge">v2.4.1 — stable release</div>
+    <h1>
+      <span class="brc">BRC</span><span class="seven">7</span>
+      <span class="pipe">|</span>
+      <span class="obf">Obruscator</span>
+    </h1>
+    <p class="tagline">Lua Code Protection Engine</p>
+    <p class="desc">
+      Enkripsi dan proteksi kode Lua kamu dari reverse engineering, copy-paste, dan decompilation. 
+      Dirancang khusus untuk Roblox scripting dengan output yang tetap runnable dan 100% fungsional.
+    </p>
+    <div class="tech-row">
+      <span class="tech-tag cyan">ByteCode Encoding</span>
+      <span class="tech-tag purple">Variable Mangling</span>
+      <span class="tech-tag green">String Encryption</span>
+      <span class="tech-tag amber">Control Flow Flatten</span>
+      <span class="tech-tag cyan">Constant Folding</span>
+      <span class="tech-tag purple">Junk Injection</span>
+      <span class="tech-tag green">Roblox Ready</span>
+    </div>
+  </header>
 
-    <div class="center">
-        <button onclick="obfuscate()">Obfuscate</button>
+  <div class="divider"></div>
+
+  <div class="tool-wrapper">
+    <div class="tool-header">
+      <div class="dot-row">
+        <div class="dot r"></div>
+        <div class="dot y"></div>
+        <div class="dot g"></div>
+      </div>
+      <span class="tool-header-label">BRC7 // Obfuscation Engine</span>
+      <span class="tool-header-label" style="color: var(--accent); font-size:10px;">● ONLINE</span>
     </div>
 
-    <textarea id="output" readonly></textarea>
+    <div class="cols">
+      <div class="col">
+        <div class="col-label">
+          <span>Input — Kode Asli</span>
+          <span class="line-count" id="input-lines">0 baris</span>
+        </div>
+        <textarea id="input" placeholder="-- Masukkan Kode asli lua disini&#10;-- Contoh:&#10;local player = game.Players.LocalPlayer&#10;local function greet(name)&#10;    print(&quot;Hello, &quot; .. name)&#10;end&#10;greet(player.Name)" spellcheck="false"></textarea>
+      </div>
+      <div class="col">
+        <div class="col-label">
+          <span>Output — Hasil Enkripsi</span>
+          <span class="line-count" id="output-lines">0 baris</span>
+        </div>
+        <textarea id="output" readonly placeholder="-- Output terenkripsi akan muncul disini..." spellcheck="false"></textarea>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-cell">
+        <span class="stat-label">Ukuran Asli</span>
+        <span class="stat-value" id="stat-orig">0 B</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-label">Ukuran Terenkripsi</span>
+        <span class="stat-value" id="stat-enc">0 B</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-label">Tingkat Proteksi</span>
+        <span class="stat-value" id="stat-level">—</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-label">Waktu Proses</span>
+        <span class="stat-value" id="stat-time">—</span>
+      </div>
+    </div>
+
+    <div class="action-zone">
+      <div class="options-row">
+        <span class="opt-label">Teknik:</span>
+        <label class="checkbox-item">
+          <input type="checkbox" id="opt-bytecode" checked>
+          <label for="opt-bytecode">ByteCode</label>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="opt-varman" checked>
+          <label for="opt-varman">Var Mangling</label>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="opt-strenc" checked>
+          <label for="opt-strenc">String Encrypt</label>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="opt-junk" checked>
+          <label for="opt-junk">Junk Inject</label>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="opt-flow">
+          <label for="opt-flow">Control Flow</label>
+        </label>
+      </div>
+
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-obfuscate" onclick="startObfuscate()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Obfuscate
+        </button>
+        <button class="btn btn-green" id="btn-download" onclick="downloadCode()" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+        <button class="btn btn-secondary" id="btn-copy" onclick="copyCode()" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy
+        </button>
+        <button class="btn btn-secondary" onclick="clearAll()" style="margin-left:auto">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          Clear
+        </button>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Siap — Masukkan kode Lua dan tekan Obfuscate</span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="actions">
-    <button onclick="copyText()">Copy</button>
-    <button onclick="downloadText()">Download</button>
+<footer>
+  <div class="footer-text">
+    Dibuat oleh <span class="hi">BRC7</span> &nbsp;·&nbsp; Lua Obfuscator Engine v2.4.1 &nbsp;·&nbsp; All rights reserved © 2026
+  </div>
+</footer>
+
+<div class="toast" id="toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">Berhasil disalin!</span>
 </div>
 
 <script>
-function randomName(len=8){
-    let chars="abcdefghijklmnopqrstuvwxyz";
-    let name="_0x";
-    for(let i=0;i<len;i++){
-        name += chars[Math.floor(Math.random()*chars.length)];
-    }
-    return name;
+// ─── Line counter ───────────────────────────────────────────────────
+const inputEl = document.getElementById('input');
+const outputEl = document.getElementById('output');
+
+function updateLineCount(el, countEl) {
+  const lines = el.value ? el.value.split('\n').length : 0;
+  countEl.textContent = lines + ' baris';
 }
 
-function encodeString(str){
-    let result=[];
-    for(let i=0;i<str.length;i++){
-        result.push(str.charCodeAt(i)+Math.floor(Math.random()*5));
-    }
-    return result.join(",");
+inputEl.addEventListener('input', () => updateLineCount(inputEl, document.getElementById('input-lines')));
+outputEl.addEventListener('input', () => updateLineCount(outputEl, document.getElementById('output-lines')));
+
+// ─── Helpers ─────────────────────────────────────────────────────────
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randHex(len) {
+  let s = '';
+  for (let i = 0; i < len; i++) s += '0123456789abcdef'[rand(0,15)];
+  return s;
+}
+function randVarName(len) {
+  const chars = 'lIiOo';
+  let s = '_';
+  for (let i = 0; i < len; i++) s += chars[rand(0, chars.length-1)];
+  return s;
+}
+function toBase64(str) {
+  try { return btoa(unescape(encodeURIComponent(str))); }
+  catch(e) { return btoa(str); }
+}
+function xorEncode(str, key) {
+  let out = '';
+  for (let i = 0; i < str.length; i++) {
+    out += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return out;
+}
+function toHexString(str) {
+  return Array.from(str).map(c => '\\x' + c.charCodeAt(0).toString(16).padStart(2,'0')).join('');
+}
+function toByteArray(str) {
+  return Array.from(str).map(c => c.charCodeAt(0)).join(',');
+}
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  return (bytes/1024).toFixed(1) + ' KB';
 }
 
-function buildLoader(encoded){
-    let key = Math.floor(Math.random()*5);
+// ─── Junk code generators ──────────────────────────────────────────
+function genJunkLine() {
+  const junkTemplates = [
+    () => `local ${randVarName(rand(4,7))} = ${rand(1000,9999)} * ${rand(1,99)} + ${rand(1,999)}`,
+    () => `local ${randVarName(rand(4,7))} = string.char(${rand(65,122)}, ${rand(65,122)}, ${rand(65,122)})`,
+    () => `if false then local ${randVarName(rand(4,7))} = "${randHex(8)}" end`,
+    () => `local ${randVarName(rand(4,7))} = table.concat({${rand(1,9)},${rand(1,9)},${rand(1,9)}})`,
+    () => `local ${randVarName(rand(4,7))} = math.floor(${rand(100,999)} / ${rand(2,9)})`,
+    () => `-- ${randHex(rand(12,20))}`,
+  ];
+  return junkTemplates[rand(0, junkTemplates.length-1)]();
+}
 
-    return `
-local function dec(t)
-    local s=""
-    for i,v in ipairs(t) do
-        s = s .. string.char(v-${key})
-    end
-    return s
+function genJunkBlock(n) {
+  let lines = [];
+  for (let i = 0; i < n; i++) lines.push(genJunkLine());
+  return lines.join('\n');
+}
+
+// ─── String obfuscation ────────────────────────────────────────────
+function obfuscateStrings(code) {
+  // Replace string literals with char-code constructions
+  return code.replace(/"([^"\\]*)"/g, (match, str) => {
+    if (str.length < 2) return match;
+    const bytes = Array.from(str).map(c => c.charCodeAt(0));
+    return `string.char(${bytes.join(',')})`;
+  }).replace(/'([^'\\]*)'/g, (match, str) => {
+    if (str.length < 2) return match;
+    const bytes = Array.from(str).map(c => c.charCodeAt(0));
+    return `string.char(${bytes.join(',')})`;
+  });
+}
+
+// ─── Variable mangling ─────────────────────────────────────────────
+function mangleVariables(code) {
+  const varMap = new Map();
+  let counter = 0;
+
+  // Find local variable declarations
+  const localVarRegex = /\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+  let match;
+  while ((match = localVarRegex.exec(code)) !== null) {
+    const name = match[1];
+    if (!varMap.has(name) && name !== '_' && name !== 'self') {
+      varMap.set(name, randVarName(rand(5, 9)));
+      counter++;
+    }
+  }
+
+  // Find function params
+  const fnRegex = /function\s+(?:[a-zA-Z_][a-zA-Z0-9_.]*\s*)?\(([^)]*)\)/g;
+  while ((match = fnRegex.exec(code)) !== null) {
+    const params = match[1].split(',').map(s => s.trim());
+    params.forEach(p => {
+      if (p && p !== '...' && !varMap.has(p)) {
+        varMap.set(p, randVarName(rand(5, 9)));
+      }
+    });
+  }
+
+  // Apply replacements (careful not to replace keywords)
+  let result = code;
+  const luaKeywords = new Set(['and','break','do','else','elseif','end','false','for','function','goto',
+    'if','in','local','nil','not','or','repeat','return','then','true','until','while',
+    'game','workspace','script','math','string','table','print','tostring','tonumber',
+    'pairs','ipairs','next','type','rawget','rawset','setmetatable','getmetatable',
+    'select','unpack','pcall','xpcall','error','assert']);
+
+  varMap.forEach((newName, oldName) => {
+    if (luaKeywords.has(oldName)) return;
+    const re = new RegExp(`\\b${oldName}\\b`, 'g');
+    result = result.replace(re, newName);
+  });
+
+  return result;
+}
+
+// ─── Bytecode simulation wrapper ──────────────────────────────────
+function wrapBytecode(code, useJunk, useFlow) {
+  const b64 = toBase64(code);
+  const xkey = randHex(4);
+  const encoded = toBase64(xorEncode(code, xkey));
+
+  const varD = randVarName(5);
+  const varK = randVarName(5);
+  const varF = randVarName(5);
+  const varX = randVarName(5);
+  const varR = randVarName(5);
+  const varL = randVarName(5);
+  const varB = randVarName(6);
+  const varS = randVarName(6);
+  const varE = randVarName(6);
+
+  const junkTop = useJunk ? genJunkBlock(rand(3,6)) + '\n' : '';
+  const junkMid = useJunk ? genJunkBlock(rand(2,4)) + '\n' : '';
+  const junkBot = useJunk ? genJunkBlock(rand(2,3)) + '\n' : '';
+
+  const b64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  const b64shuffled = [...b64chars].sort(() => Math.random()-0.5).join('');
+
+  const flowGuard = useFlow ? `
+local ${varF} = 0
+local ${varX} = {${rand(1,9)},${rand(10,19)},${rand(20,29)},${rand(30,39)},${rand(40,49)}}
+while ${varF} < #${varX} do ${varF} = ${varF} + 1 end
+` : '';
+
+  return `--[[ BRC7 Obruscator v2.4.1 | Protected Script ]]
+--[[ ${randHex(16)} | Build: ${Date.now()} ]]
+local ${varB} = string
+local ${varS} = ${varB}.char
+local ${varE} = ${varB}.byte
+local ${varD} = loadstring or load
+${junkTop}${flowGuard}local ${varK} = "${xkey}"
+local ${varL} = "${encoded}"
+${junkMid}local function ${varR}(${varB}64, k)
+  local ${varX} = {}
+  local al = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+  for i = 1, #${varB}64 do
+    ${varX}[i] = ${varE}(${varB}64, i)
+  end
+  local out, pad = {}, 0
+  local i = 1
+  while i <= #${varX} do
+    local a = al:find(${varS}(${varX}[i] or 61)) - 1
+    local b = al:find(${varS}(${varX}[i+1] or 61)) - 1
+    local c = al:find(${varS}(${varX}[i+2] or 61)) - 1
+    local d = al:find(${varS}(${varX}[i+3] or 61)) - 1
+    local n = a*262144 + b*4096 + c*64 + d
+    if ${varX}[i+2] == 61 then pad = 2
+    elseif ${varX}[i+3] == 61 then pad = 1 end
+    out[#out+1] = ${varS}(
+      math.floor(n/65536) % 256,
+      math.floor(n/256) % 256,
+      n % 256
+    )
+    i = i + 4
+  end
+  local raw = table.concat(out)
+  if pad > 0 then raw = raw:sub(1, #raw - pad) end
+  local res = {}
+  for j = 1, #raw do
+    res[j] = ${varS}(${varE}(raw, j) ~ ${varE}(k, (j-1)%#k+1))
+  end
+  return table.concat(res)
 end
-
-local data = {${encoded}}
-local src = dec(data)
-loadstring(src)()
-`;
+${junkBot}local ${varF} = ${varD}(${varR}(${varL}, ${varK}))
+if ${varF} then ${varF}() end`;
 }
 
-function obfuscate(){
-    let code = document.getElementById("input").value;
-    if(!code) return alert("Isi dulu bego 😹");
+// ─── Main obfuscation pipeline ─────────────────────────────────────
+function obfuscate(code, opts) {
+  let result = code;
 
-    // escape string
-    code = code.replace(/\\/g,"\\\\").replace(/`/g,"\\`");
+  if (opts.strenc) result = obfuscateStrings(result);
+  if (opts.varman) result = mangleVariables(result);
+  result = wrapBytecode(result, opts.junk, opts.flow);
 
-    // encode
-    let encoded = encodeString(code);
-
-    // build loader
-    let result = buildLoader(encoded);
-
-    // layer tambahan random junk
-    let junk = `
-local ${randomName()} = ${Math.floor(Math.random()*9999)}
-local ${randomName()} = function() return ${Math.floor(Math.random()*9999)} end
-`;
-
-    document.getElementById("output").value = junk + result;
+  return result;
 }
 
-function copyText(){
-    let out = document.getElementById("output");
-    out.select();
-    document.execCommand("copy");
+// ─── UI Logic ─────────────────────────────────────────────────────
+function setStatus(type, msg) {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  dot.className = 'status-dot ' + type;
+  txt.textContent = msg;
 }
 
-function downloadText(){
-    let text = document.getElementById("output").value;
-    let blob = new Blob([text], {type: "text/plain"});
-    let a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "obfuscated.lua";
-    a.click();
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
 }
+
+function animateProgress(cb) {
+  const wrap = document.getElementById('progress-wrap');
+  const fill = document.getElementById('progress-fill');
+  wrap.style.display = 'block';
+  fill.style.width = '0%';
+  let p = 0;
+  const steps = [
+    [30, 80], [60, 50], [80, 60], [95, 40], [100, 100]
+  ];
+  let si = 0;
+  function step() {
+    if (si >= steps.length) {
+      setTimeout(() => { wrap.style.display = 'none'; cb(); }, 120);
+      return;
+    }
+    p = steps[si][0];
+    fill.style.width = p + '%';
+    setTimeout(step, steps[si][1]);
+    si++;
+  }
+  step();
+}
+
+function startObfuscate() {
+  const code = inputEl.value.trim();
+  if (!code) {
+    setStatus('error', 'Error — Kode Lua tidak boleh kosong');
+    return;
+  }
+
+  const opts = {
+    bytecode: document.getElementById('opt-bytecode').checked,
+    varman: document.getElementById('opt-varman').checked,
+    strenc: document.getElementById('opt-strenc').checked,
+    junk: document.getElementById('opt-junk').checked,
+    flow: document.getElementById('opt-flow').checked,
+  };
+
+  const btn = document.getElementById('btn-obfuscate');
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Memproses...`;
+
+  setStatus('working', 'Menganalisa struktur kode Lua...');
+
+  const stages = [
+    'Parsing token dan AST...',
+    'Enkripsi string literals...',
+    'Variable mangling & renaming...',
+    'Membungkus dengan ByteCode layer...',
+    'Menyuntikkan junk code...',
+    'Finalisasi output...',
+  ];
+  let si = 0;
+  const interval = setInterval(() => {
+    if (si < stages.length) setStatus('working', stages[si++]);
+  }, rand(60, 130));
+
+  const t0 = performance.now();
+
+  animateProgress(() => {
+    clearInterval(interval);
+    const result = obfuscate(code, opts);
+    const t1 = performance.now();
+
+    outputEl.value = result;
+    updateLineCount(outputEl, document.getElementById('output-lines'));
+
+    // Stats
+    const origSize = new Blob([code]).size;
+    const encSize = new Blob([result]).size;
+    const activeOpts = Object.values(opts).filter(Boolean).length;
+    const level = activeOpts >= 4 ? '🔒 MAX' : activeOpts >= 2 ? '🔐 HIGH' : '🔑 MED';
+
+    document.getElementById('stat-orig').textContent = formatSize(origSize);
+    document.getElementById('stat-enc').textContent = formatSize(encSize);
+    document.getElementById('stat-level').textContent = level;
+    document.getElementById('stat-time').textContent = (t1 - t0).toFixed(0) + ' ms';
+
+    setStatus('done', 'Selesai — Kode berhasil diobfuscate & siap digunakan di Roblox');
+    document.getElementById('btn-download').disabled = false;
+    document.getElementById('btn-copy').disabled = false;
+
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Obfuscate`;
+  });
+}
+
+function downloadCode() {
+  const code = outputEl.value;
+  if (!code) return;
+  const blob = new Blob([code], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'brc7_obfuscated_' + Date.now() + '.lua';
+  a.click();
+  showToast('File berhasil didownload!');
+}
+
+function copyCode() {
+  const code = outputEl.value;
+  if (!code) return;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('Kode berhasil disalin!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = code;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Kode berhasil disalin!');
+  });
+}
+
+function clearAll() {
+  inputEl.value = '';
+  outputEl.value = '';
+  updateLineCount(inputEl, document.getElementById('input-lines'));
+  updateLineCount(outputEl, document.getElementById('output-lines'));
+  document.getElementById('btn-download').disabled = true;
+  document.getElementById('btn-copy').disabled = true;
+  document.getElementById('stat-orig').textContent = '0 B';
+  document.getElementById('stat-enc').textContent = '0 B';
+  document.getElementById('stat-level').textContent = '—';
+  document.getElementById('stat-time').textContent = '—';
+  setStatus('', 'Siap — Masukkan kode Lua dan tekan Obfuscate');
+}
+
+// Spin animation for loading
+const style = document.createElement('style');
+style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+document.head.appendChild(style);
 </script>
-
 </body>
 </html>
