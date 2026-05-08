@@ -1,462 +1,148 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRC7 | Obfuscator - Extreme Edition (Fixed)</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', 'Inter', 'Fira Code', monospace;
-            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03060c);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .terminal {
-            max-width: 1500px;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(16px);
-            border-radius: 2rem;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.2);
-            padding: 2rem;
-        }
-
-        h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00f0ff, #ff00c6, #ffcc00);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            text-align: center;
-            letter-spacing: -1px;
-            text-shadow: 0 0 8px cyan;
-        }
-
-        .badge {
-            text-align: center;
-            margin: 0.5rem 0;
-            font-size: 0.8rem;
-            color: #0ff;
-            font-family: monospace;
-        }
-
-        .description {
-            background: #0a101e;
-            border-left: 4px solid #ff00c6;
-            padding: 0.8rem 1.5rem;
-            border-radius: 1rem;
-            margin: 1.5rem 0;
-            color: #bbf0ff;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        .row {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            margin: 1.5rem 0;
-        }
-
-        .col {
-            flex: 1;
-            background: #01040c;
-            border-radius: 1.2rem;
-            overflow: hidden;
-            border: 1px solid #2a4c6e;
-            transition: 0.2s;
-        }
-
-        .col h3 {
-            background: #07121f;
-            padding: 0.8rem 1rem;
-            font-size: 1rem;
-            border-bottom: 1px solid #1e4a6e;
-            color: #0ff;
-        }
-
-        textarea {
-            width: 100%;
-            height: 450px;
-            background: #000000;
-            color: #0fefef;
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
-            padding: 1rem;
-            border: none;
-            outline: none;
-            resize: vertical;
-            white-space: pre-wrap;
-        }
-
-        textarea:focus {
-            background: #001015;
-        }
-
-        .action-center {
-            display: flex;
-            justify-content: center;
-            margin: 1rem 0;
-        }
-
-        .obf-btn {
-            background: linear-gradient(90deg, #0f2f3f, #0a1a2a);
-            border: 1px solid cyan;
-            color: cyan;
-            padding: 12px 32px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 0 10px rgba(0,255,255,0.3);
-        }
-
-        .obf-btn:hover {
-            transform: scale(1.03);
-            background: linear-gradient(90deg, #1f4f6f, #0f2f4f);
-            box-shadow: 0 0 20px cyan;
-            color: white;
-        }
-
-        .bottom-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .sec-btn {
-            background: #111c2a;
-            border: 1px solid #3a6f9f;
-            padding: 0.6rem 1.5rem;
-            border-radius: 32px;
-            color: #aaffff;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        .sec-btn:hover {
-            background: #1e3a5f;
-            border-color: cyan;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #1e4a2f;
-            padding: 10px 20px;
-            border-radius: 40px;
-            color: white;
-            z-index: 999;
-            animation: fadeOut 2s forwards;
-            font-family: monospace;
-        }
-
-        @keyframes fadeOut {
-            0% { opacity: 1; transform: translateY(0);}
-            100% { opacity: 0; transform: translateY(-20px); visibility: hidden;}
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.7rem;
-            color: #2a6f8f;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>BRC7 | Obfuscator</title>
+<style>
+body {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: Arial;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    margin: 20px;
+}
+.container {
+    display: flex;
+    gap: 20px;
+    width: 90%;
+}
+textarea {
+    width: 45%;
+    height: 400px;
+    background: #020617;
+    color: #38bdf8;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+}
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+button:hover {
+    background: #0ea5e9;
+}
+.actions {
+    margin-top: 10px;
+}
+</style>
 </head>
 <body>
-<div class="terminal">
-    <h1>BRC7 | Obfuscator</h1>
-    <div class="badge">⚡ EXTREME EDITION · FIXED & ENHANCED ⚡</div>
-    <div class="description">
-        🔥 Obfuscation tingkat maksimal: control flow flattening, string-to-char acak, rename semua variabel, dead code injection, angka jadi rumus.<br>
-        ➤ Hasil kode Lua sangat sulit dibaca dan dideobfuscate. Tetap 100% <span style="color:#0ff;">RUNTIME COMPATIBLE</span> di Roblox.
+
+<h1>BRC7 | Obfuscator</h1>
+
+<div class="container">
+    <textarea id="input" placeholder="Masukkan kode asli disini"></textarea>
+
+    <div class="center">
+        <button onclick="obfuscate()">Obfuscate</button>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <h3>📜 SOURCE CODE (LUA)</h3>
-            <textarea id="inputCode" placeholder="-- Masukkan kode Lua asli kamu disini
-local a = 10
-local msg = 'hack'
-print(msg .. tostring(a))"></textarea>
-        </div>
-        <div class="col">
-            <h3>💀 OBFUSCATED (EXTREME)</h3>
-            <textarea id="outputCode" readonly placeholder="Hasil obfuscate akan muncul disini... benar-benar gak terbaca"></textarea>
-        </div>
-    </div>
+    <textarea id="output" readonly></textarea>
+</div>
 
-    <div class="action-center">
-        <button class="obf-btn" id="obfuscateBtn">🌀 EXTREME OBFUSCATE</button>
-    </div>
-
-    <div class="bottom-buttons">
-        <button class="sec-btn" id="copyBtn">📋 COPY</button>
-        <button class="sec-btn" id="downloadBtn">⬇️ DOWNLOAD .LUA</button>
-    </div>
-    <footer>BRC7 · Obfuscator lokal — Teknik: CF flattening, random name, string enkripsi multilevel, dead code injection.</footer>
+<div class="actions">
+    <button onclick="copyText()">Copy</button>
+    <button onclick="downloadText()">Download</button>
 </div>
 
 <script>
-    (function() {
-        // ------------------------------------------------------------------
-        // EXTREME LUA OBFUSCATOR - BRC7 EDITION (FIXED)
-        // ------------------------------------------------------------------
-        
-        // Helper: generate random hex name (variable)
-        function randomVarName() {
-            let len = Math.floor(Math.random() * 6) + 5; // 5-10 chars
-            let chars = "0123456789abcdefghijklmnopqrstuvwxyz";
-            let name = "_0x";
-            for (let i = 0; i < len; i++) {
-                name += chars[Math.floor(Math.random() * chars.length)];
-            }
-            return name;
-        }
+function randomName(len=8){
+    let chars="abcdefghijklmnopqrstuvwxyz";
+    let name="_0x";
+    for(let i=0;i<len;i++){
+        name += chars[Math.floor(Math.random()*chars.length)];
+    }
+    return name;
+}
 
-        // Enkripsi string literal menjadi string.char + random order + gabungan
-        function encryptString(str) {
-            if (str.length === 0) return '""';
-            let bytes = [];
-            for (let i = 0; i < str.length; i++) {
-                bytes.push(str.charCodeAt(i));
-            }
-            // acak urutan bytes? tidak boleh karena urutan penting. Tapi kita bisa split jadi beberapa bagian
-            let parts = [];
-            let chunkSize = Math.floor(Math.random() * 4) + 2;
-            for (let i = 0; i < bytes.length; i += chunkSize) {
-                let chunk = bytes.slice(i, i+chunkSize);
-                parts.push("string.char(" + chunk.join(",") + ")");
-            }
-            if (parts.length === 1) return parts[0];
-            return "(" + parts.join("..") + ")";
-        }
+function encodeString(str){
+    let result=[];
+    for(let i=0;i<str.length;i++){
+        result.push(str.charCodeAt(i)+Math.floor(Math.random()*5));
+    }
+    return result.join(",");
+}
 
-        // Enkripsi angka (nilai numerik) menjadi ekspresi matematika rumit
-        function encryptNumber(num) {
-            if (typeof num !== 'number') return num;
-            // random operation: ( (X * a) / b ) + c - d
-            let a = Math.floor(Math.random() * 50) + 1;
-            let b = Math.floor(Math.random() * 20) + 1;
-            let c = Math.floor(Math.random() * 100);
-            let d = Math.floor(Math.random() * 50);
-            let result = (num * a) / b + c - d;
-            // Ekspresi matematika rumit
-            let expr = `((${num} * ${a}) / ${b} + ${c} - ${d})`;
-            return expr;
-        }
+function buildLoader(encoded){
+    let key = Math.floor(Math.random()*5);
 
-        // Fungsi untuk menghilangkan spasi berlebih tapi tetap mempertahankan newline minimal
-        function minify(code) {
-            // Hapus spasi ganda di luar string, tapi jangan sentuh newline biar tidak kacau
-            return code.replace(/[ \t]+/g, ' ').replace(/;\s*;/g, ';').trim();
-        }
-        
-        // Escape regex
-        function escapeRegex(str) {
-            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
+    return `
+local function dec(t)
+    local s=""
+    for i,v in ipairs(t) do
+        s = s .. string.char(v-${key})
+    end
+    return s
+end
 
-        // MAIN OBFUSCATOR
-        function extremeObfuscate(source) {
-            if (!source.trim()) return "-- empty code";
-            try {
-                // 1. Ambil semua variabel lokal (local x)
-                let allVars = new Set();
-                // Cari pola local var
-                let localRegex = /\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
-                let match;
-                while ((match = localRegex.exec(source)) !== null) {
-                    allVars.add(match[1]);
-                }
-                // ambil parameter fungsi (function name(par1, par2))
-                let paramRegex = /function\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(([^)]*)\)/g;
-                while ((match = paramRegex.exec(source)) !== null) {
-                    let params = match[1].split(',');
-                    for (let p of params) {
-                        let clean = p.trim();
-                        if (clean) allVars.add(clean);
-                    }
-                }
-                // Juga ambil variabel pada for loops: for i=1,10 do
-                let forRegex = /\bfor\s+([a-zA-Z_][a-zA-Z0-9_]*)[\s,=]/g;
-                while ((match = forRegex.exec(source)) !== null) {
-                    allVars.add(match[1]);
-                }
-                
-                // rename map
-                let renameMap = new Map();
-                for (let v of allVars) {
-                    let newName = randomVarName();
-                    renameMap.set(v, newName);
-                }
-                
-                // 2. Ganti semua variabel yang dikenal di source
-                let obf = source;
-                for (let [oldVar, newVar] of renameMap) {
-                    let regex = new RegExp(`\\b${escapeRegex(oldVar)}\\b`, 'g');
-                    obf = obf.replace(regex, newVar);
-                }
-                
-                // 3. Enkripsi semua string literal (double dan single quotes)
-                obf = obf.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, function(match) {
-                    let content = match.slice(1, -1);
-                    return encryptString(content);
-                });
-                
-                // 4. Enkripsi angka (angka literal)
-                obf = obf.replace(/\b\d+(?:\.\d+)?\b/g, function(num) {
-                    if (Math.random() > 0.5) return encryptNumber(parseFloat(num));
-                    else return num;
-                });
-                
-                // 5. Suntikkan dead code (variabel tidak berguna)
-                let deadVars = [];
-                for (let i = 0; i < 8; i++) {
-                    deadVars.push(randomVarName());
-                }
-                let deadInject = "local " + deadVars.join(',') + ";\n";
-                for (let dv of deadVars) {
-                    deadInject += dv + " = (function() return " + Math.floor(Math.random()*9999) + " end)();\n";
-                }
-                obf = deadInject + obf;
-                
-                // 6. Rename global functions (print, wait, tostring, dll) menjadi lookup di _G
-                let globalFuncs = ['print', 'wait', 'tostring', 'tonumber', 'type', 'pairs', 'ipairs', 'table', 'string', 'math', 'game', 'workspace', 'script', 'Instance'];
-                let globalRename = new Map();
-                for (let g of globalFuncs) {
-                    globalRename.set(g, randomVarName());
-                }
-                let globalInit = "local ";
-                let initParts = [];
-                for (let [oldG, newG] of globalRename) {
-                    initParts.push(`${newG}=_G[${encryptString(oldG)}]`);
-                }
-                globalInit += initParts.join(',') + ";\n";
-                obf = globalInit + obf;
-                // Ganti pemanggilan fungsi global
-                for (let [oldG, newG] of globalRename) {
-                    let re = new RegExp(`\\b${escapeRegex(oldG)}\\b`, 'g');
-                    obf = obf.replace(re, newG);
-                }
-                
-                // 7. Tambahkan junk string
-                let junk = "local _junk = " + encryptString("Just random noise") + ";\n";
-                obf = junk + obf;
-                
-                // 8. Bungkus dalam self-executing function untuk menambah scope
-                let wrapperStart = "(function()\n";
-                let wrapperEnd = "\nend)()";
-                obf = wrapperStart + obf + wrapperEnd;
-                
-                // 9. Minify (hapus spasi berlebih) tapi jangan sampai merusak struktur
-                obf = minify(obf);
-                
-                // 10. Tambahkan header acak
-                let header = "-- BRC7_ENC_" + Math.random().toString(36).substring(2,10) + "\n";
-                return header + obf;
-            } catch(e) {
-                console.error(e);
-                return "-- Obfuscation error: " + e.message + "\n" + source;
-            }
-        }
+local data = {${encoded}}
+local src = dec(data)
+loadstring(src)()
+`;
+}
 
-        // UI Elements
-        const inputArea = document.getElementById('inputCode');
-        const outputArea = document.getElementById('outputCode');
-        const obfBtn = document.getElementById('obfuscateBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
+function obfuscate(){
+    let code = document.getElementById("input").value;
+    if(!code) return alert("Isi dulu bego 😹");
 
-        function showMsg(msg, isErr = false) {
-            let div = document.createElement('div');
-            div.className = 'toast';
-            div.style.background = isErr ? '#8b2c2c' : '#1e5a4f';
-            div.innerText = msg;
-            document.body.appendChild(div);
-            setTimeout(() => div.remove(), 2000);
-        }
+    // escape string
+    code = code.replace(/\\/g,"\\\\").replace(/`/g,"\\`");
 
-        function doObfuscate() {
-            let src = inputArea.value;
-            if (!src.trim()) {
-                outputArea.value = "-- Error: kode kosong";
-                showMsg("❌ Masukkan kode Lua!", true);
-                return;
-            }
-            try {
-                let result = extremeObfuscate(src);
-                outputArea.value = result;
-                showMsg("✅ Obfuscate extreme berhasil! Kode sangat sulit dibaca.");
-            } catch(e) {
-                console.error(e);
-                outputArea.value = "-- Exception: " + e.message;
-                showMsg("⚠️ Gagal: " + e.message, true);
-            }
-        }
+    // encode
+    let encoded = encodeString(code);
 
-        async function copyResult() {
-            let txt = outputArea.value;
-            if (!txt || txt.includes("Error") && txt.length < 20) {
-                showMsg("Tidak ada hasil untuk di-copy", true);
-                return;
-            }
-            try {
-                await navigator.clipboard.writeText(txt);
-                showMsg("📋 Kode obfuscate disalin!");
-            } catch(e) {
-                showMsg("Gagal copy", true);
-            }
-        }
+    // build loader
+    let result = buildLoader(encoded);
 
-        function download() {
-            let content = outputArea.value;
-            if (!content || (content.includes("Error") && content.length<30)) {
-                showMsg("Tidak ada hasil untuk didownload", true);
-                return;
-            }
-            let blob = new Blob([content], {type: "text/plain"});
-            let a = document.createElement('a');
-            let url = URL.createObjectURL(blob);
-            a.href = url;
-            a.download = "brc7_obfuscated_" + Date.now() + ".lua";
-            a.click();
-            URL.revokeObjectURL(url);
-            showMsg("💾 File .lua terunduh");
-        }
+    // layer tambahan random junk
+    let junk = `
+local ${randomName()} = ${Math.floor(Math.random()*9999)}
+local ${randomName()} = function() return ${Math.floor(Math.random()*9999)} end
+`;
 
-        obfBtn.addEventListener('click', doObfuscate);
-        copyBtn.addEventListener('click', copyResult);
-        downloadBtn.addEventListener('click', download);
+    document.getElementById("output").value = junk + result;
+}
 
-        // Set contoh kode agar tidak kosong
-        inputArea.value = `-- Contoh script Roblox (testing extreme obfuscate)
-local player = game.Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local humanoid = char:FindFirstChild("Humanoid")
-if humanoid then
-    humanoid.WalkSpeed = 50
-    print("Speed changed to " .. tostring(humanoid.WalkSpeed))
-end`;
-        outputArea.value = "";
-    })();
+function copyText(){
+    let out = document.getElementById("output");
+    out.select();
+    document.execCommand("copy");
+}
+
+function downloadText(){
+    let text = document.getElementById("output").value;
+    let blob = new Blob([text], {type: "text/plain"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "obfuscated.lua";
+    a.click();
+}
 </script>
+
 </body>
 </html>
