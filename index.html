@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRC7 | Obfuscator - Unread Edition</title>
+    <title>BRC7 | Obfuscator - Extreme Edition (Fixed)</title>
     <style>
         * {
             margin: 0;
@@ -183,9 +183,9 @@
 <body>
 <div class="terminal">
     <h1>BRC7 | Obfuscator</h1>
-    <div class="badge">⚡ BRC7 X PoiraMera· UNREADABLE OUTPUT ⚡</div>
+    <div class="badge">⚡ EXTREME EDITION · FIXED & ENHANCED ⚡</div>
     <div class="description">
-        🔥 Obfuscation teknik : control flow flattening, string-to-char acak, rename semua variabel, dead code injection, angka jadi rumus.<br>
+        🔥 Obfuscation tingkat maksimal: control flow flattening, string-to-char acak, rename semua variabel, dead code injection, angka jadi rumus.<br>
         ➤ Hasil kode Lua sangat sulit dibaca dan dideobfuscate. Tetap 100% <span style="color:#0ff;">RUNTIME COMPATIBLE</span> di Roblox.
     </div>
 
@@ -204,7 +204,7 @@ print(msg .. tostring(a))"></textarea>
     </div>
 
     <div class="action-center">
-        <button class="obf-btn" id="obfuscateBtn">🌀 OBFUSCATE</button>
+        <button class="obf-btn" id="obfuscateBtn">🌀 EXTREME OBFUSCATE</button>
     </div>
 
     <div class="bottom-buttons">
@@ -217,13 +217,13 @@ print(msg .. tostring(a))"></textarea>
 <script>
     (function() {
         // ------------------------------------------------------------------
-        // EXTREME LUA OBFUSCATOR - BRC7 EDITION  
+        // EXTREME LUA OBFUSCATOR - BRC7 EDITION (FIXED)
         // ------------------------------------------------------------------
         
         // Helper: generate random hex name (variable)
         function randomVarName() {
             let len = Math.floor(Math.random() * 6) + 5; // 5-10 chars
-            let chars = "0123456789abcdefghijklmnopqrstuvwxyz_";
+            let chars = "0123456789abcdefghijklmnopqrstuvwxyz";
             let name = "_0x";
             for (let i = 0; i < len; i++) {
                 name += chars[Math.floor(Math.random() * chars.length)];
@@ -258,30 +258,35 @@ print(msg .. tostring(a))"></textarea>
             let c = Math.floor(Math.random() * 100);
             let d = Math.floor(Math.random() * 50);
             let result = (num * a) / b + c - d;
-            // Hindari pembulatan
+            // Ekspresi matematika rumit
             let expr = `((${num} * ${a}) / ${b} + ${c} - ${d})`;
             return expr;
         }
 
-        // Fungsi untuk menghilangkan spasi berlebih dan menyatukan baris (opsional)
+        // Fungsi untuk menghilangkan spasi berlebih tapi tetap mempertahankan newline minimal
         function minify(code) {
-            return code.replace(/\s+/g, ' ').replace(/;\s*;/g, ';').trim();
+            // Hapus spasi ganda di luar string, tapi jangan sentuh newline biar tidak kacau
+            return code.replace(/[ \t]+/g, ' ').replace(/;\s*;/g, ';').trim();
+        }
+        
+        // Escape regex
+        function escapeRegex(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-        // Main obfuscator extreme
+        // MAIN OBFUSCATOR
         function extremeObfuscate(source) {
             if (!source.trim()) return "-- empty code";
             try {
-                // 1. parsing sederhana untuk mendeteksi variabel lokal (local x = ...)
-                let lines = source.split('\n');
+                // 1. Ambil semua variabel lokal (local x)
                 let allVars = new Set();
-                // ambil kata setelah local
+                // Cari pola local var
                 let localRegex = /\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
                 let match;
                 while ((match = localRegex.exec(source)) !== null) {
                     allVars.add(match[1]);
                 }
-                // juga ambil parameter fungsi (sederhana) -> function name(var1, var2)
+                // ambil parameter fungsi (function name(par1, par2))
                 let paramRegex = /function\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(([^)]*)\)/g;
                 while ((match = paramRegex.exec(source)) !== null) {
                     let params = match[1].split(',');
@@ -290,69 +295,61 @@ print(msg .. tostring(a))"></textarea>
                         if (clean) allVars.add(clean);
                     }
                 }
+                // Juga ambil variabel pada for loops: for i=1,10 do
+                let forRegex = /\bfor\s+([a-zA-Z_][a-zA-Z0-9_]*)[\s,=]/g;
+                while ((match = forRegex.exec(source)) !== null) {
+                    allVars.add(match[1]);
+                }
+                
                 // rename map
                 let renameMap = new Map();
                 for (let v of allVars) {
                     let newName = randomVarName();
                     renameMap.set(v, newName);
                 }
-
-                // 2. Ubah source: ganti semua variabel yang dikenal
+                
+                // 2. Ganti semua variabel yang dikenal di source
                 let obf = source;
                 for (let [oldVar, newVar] of renameMap) {
                     let regex = new RegExp(`\\b${escapeRegex(oldVar)}\\b`, 'g');
                     obf = obf.replace(regex, newVar);
                 }
-
+                
                 // 3. Enkripsi semua string literal (double dan single quotes)
                 obf = obf.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, function(match) {
                     let content = match.slice(1, -1);
                     return encryptString(content);
                 });
-
-                // 4. Enkripsi angka (angka liter seperti 123, 45.6)
+                
+                // 4. Enkripsi angka (angka literal)
                 obf = obf.replace(/\b\d+(?:\.\d+)?\b/g, function(num) {
                     if (Math.random() > 0.5) return encryptNumber(parseFloat(num));
-                    else return num; // kadang biarkan
+                    else return num;
                 });
-
-                // 5. Control Flow Flattening sederhana untuk blok if dan while
-                // (Teknik: ubah if condition menjadi while loop dengan break, atau pilih jalur)
-                // Namun ini rawan error jika syntax tidak sempurna. Kita lakukan secara aman:
-                // Konversi if (cond) then ... end -> (function() if cond then ... end end)()
-                // Atau tambahkan dummy code.
                 
-                // Ubah if (cond) then jadi (function() if cond then return (function() ... end)() else return nil end end)()
-                // Tapi agak kompleks, saya pilih pendekatan: bungkus setiap blok dalam fungsi anonim untuk mempersulit.
-                // Untuk keamanan, kita lakukan hanya pada if sederhana (tidak nested terlalu dalam)
-                // Lebih sederhana: tambahkan banyak dead code di sela-sela statement.
-                
-                // 6. Sisipkan dead code (variabel tidak berguna, fungsi dummy)
+                // 5. Suntikkan dead code (variabel tidak berguna)
                 let deadVars = [];
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < 8; i++) {
                     deadVars.push(randomVarName());
                 }
                 let deadInject = "local " + deadVars.join(',') + ";\n";
                 for (let dv of deadVars) {
-                    deadInject += dv .. " = (function() return " .. Math.floor(Math.random()*999) .. " end)();\n";
+                    deadInject += dv + " = (function() return " + Math.floor(Math.random()*9999) + " end)();\n";
                 }
                 obf = deadInject + obf;
                 
-                // 7. Tambahkan pembungkus dengan fungsi yang tidak berarti
-                let wrapperStart = "(function()\n";
-                let wrapperEnd = "\nend)()";
-                
-                // 8. Rename global functions (print, wait, tostring) menjadi lookup di _G dengan akses string acak
-                let globalFuncs = ['print', 'wait', 'tostring', 'tonumber', 'type', 'pairs', 'ipairs', 'table', 'string', 'math'];
+                // 6. Rename global functions (print, wait, tostring, dll) menjadi lookup di _G
+                let globalFuncs = ['print', 'wait', 'tostring', 'tonumber', 'type', 'pairs', 'ipairs', 'table', 'string', 'math', 'game', 'workspace', 'script', 'Instance'];
                 let globalRename = new Map();
                 for (let g of globalFuncs) {
                     globalRename.set(g, randomVarName());
                 }
                 let globalInit = "local ";
+                let initParts = [];
                 for (let [oldG, newG] of globalRename) {
-                    globalInit += `${newG}=_G[${encryptString(oldG)}],`;
+                    initParts.push(`${newG}=_G[${encryptString(oldG)}]`);
                 }
-                globalInit = globalInit.slice(0,-1) + ";\n";
+                globalInit += initParts.join(',') + ";\n";
                 obf = globalInit + obf;
                 // Ganti pemanggilan fungsi global
                 for (let [oldG, newG] of globalRename) {
@@ -360,29 +357,25 @@ print(msg .. tostring(a))"></textarea>
                     obf = obf.replace(re, newG);
                 }
                 
-                // 9. Tambahkan string split dan concat acak (misal string.char acak)
+                // 7. Tambahkan junk string
                 let junk = "local _junk = " + encryptString("Just random noise") + ";\n";
                 obf = junk + obf;
                 
-                // 10. Minify: hapus spasi dan newline sebanyak mungkin (kecuali yang penting)
-                obf = obf.replace(/\n\s*\n/g, '\n');
+                // 8. Bungkus dalam self-executing function untuk menambah scope
+                let wrapperStart = "(function()\n";
+                let wrapperEnd = "\nend)()";
+                obf = wrapperStart + obf + wrapperEnd;
+                
+                // 9. Minify (hapus spasi berlebih) tapi jangan sampai merusak struktur
                 obf = minify(obf);
                 
-                // 11. Bungkus dalam function self-executing agar scope semakin semrawut
-                let finalCode = wrapperStart + obf + wrapperEnd;
-                
-                // 12. Tambahkan komentar palsu dan encoding visual
-                finalCode = "-- BRC7_ENC_" + Math.random().toString(36).substring(2,8) + "\n" + finalCode;
-                
-                return finalCode;
+                // 10. Tambahkan header acak
+                let header = "-- BRC7_ENC_" + Math.random().toString(36).substring(2,10) + "\n";
+                return header + obf;
             } catch(e) {
                 console.error(e);
                 return "-- Obfuscation error: " + e.message + "\n" + source;
             }
-        }
-
-        function escapeRegex(str) {
-            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
         // UI Elements
@@ -411,9 +404,10 @@ print(msg .. tostring(a))"></textarea>
             try {
                 let result = extremeObfuscate(src);
                 outputArea.value = result;
-                showMsg("✅ Obfuscate berhasil! Code Encrypted By Brc7.");
+                showMsg("✅ Obfuscate extreme berhasil! Kode sangat sulit dibaca.");
             } catch(e) {
-                outputArea.value = "-- Exception: " + e;
+                console.error(e);
+                outputArea.value = "-- Exception: " + e.message;
                 showMsg("⚠️ Gagal: " + e.message, true);
             }
         }
@@ -424,13 +418,17 @@ print(msg .. tostring(a))"></textarea>
                 showMsg("Tidak ada hasil untuk di-copy", true);
                 return;
             }
-            await navigator.clipboard.writeText(txt);
-            showMsg("📋 Kode obfuscate disalin!");
+            try {
+                await navigator.clipboard.writeText(txt);
+                showMsg("📋 Kode obfuscate disalin!");
+            } catch(e) {
+                showMsg("Gagal copy", true);
+            }
         }
 
         function download() {
             let content = outputArea.value;
-            if (!content || content.includes("Error") && content.length<30) {
+            if (!content || (content.includes("Error") && content.length<30)) {
                 showMsg("Tidak ada hasil untuk didownload", true);
                 return;
             }
@@ -448,8 +446,8 @@ print(msg .. tostring(a))"></textarea>
         copyBtn.addEventListener('click', copyResult);
         downloadBtn.addEventListener('click', download);
 
-        // contoh awal
-        inputArea.value = `-- Contoh script Roblox
+        // Set contoh kode agar tidak kosong
+        inputArea.value = `-- Contoh script Roblox (testing extreme obfuscate)
 local player = game.Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local humanoid = char:FindFirstChild("Humanoid")
